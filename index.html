@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ws</title>
+</head>
+<body>
+  <main>
+    <button id="btn-close">Close connection</button>
+
+    <div id="chat"></div>
+
+    <form id="form">
+      <label for="input">Input:</label>
+      <input type="text" id="input" name="input" placeholder="Type something...">
+      <button id="btn">Send info to the server</button>
+    </form>
+  </main>
+  <script>
+    let ws = new WebSocket('ws://localhost:8080');
+    let btnClose = document.getElementById('btn-close');
+    let form = document.getElementById('form');
+    let input = document.getElementById('input');
+    let chat = document.getElementById('chat');
+    let messages = [];
+
+    ws.onopen = (event) => {
+      console.log('WebSocket is open now.');
+      // ws.send('Hello, server!');
+    }
+
+    ws.onmessage = (event) => {
+      console.log('Message from server:', event.data);
+      const messages = JSON.parse(event.data);
+      chat.innerHTML = '';
+      let template = '';
+      messages.forEach(({message, client}) => {
+        template += `<span><strong>${client}:</strong> ${message} </span> <br/>`;
+      });
+      chat.innerHTML = template;
+    }
+
+    btnClose.addEventListener('click', () => {
+      if (ws.readyState === WebSocket.OPEN) {
+        console.log('Closing WebSocket connection...');
+        ws.close();
+        console.log('WebSocket connection status:', ws.readyState);
+      } else {
+        console.log('WebSocket is not open.');
+      }
+    });
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      if (!input.value) {
+        console.error('Input is empty, nothing to send.');
+        return;
+      }
+      
+      if (ws.readyState === WebSocket.OPEN) {
+        console.log('Form submitted, sending message to server:', input.value);
+        ws.send(input.value);
+      } else {
+        console.log('WebSocket is not open.');
+      }
+
+      input.value = '';
+    });
+  </script>
+</body>
+</html>

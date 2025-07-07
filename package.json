@@ -1,0 +1,16 @@
+{
+  "name": "ws-demo",
+  "version": "1.0.0",
+  "description": "A native WebSocket demo using ws package",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node --watch index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "j4vierb",
+  "license": "ISC",
+  "dependencies": {
+    "ws": "^8.18.3"
+  }
+}
