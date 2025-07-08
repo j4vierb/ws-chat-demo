@@ -1,0 +1,70 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout>
+  <div id="chat"></div>
+
+  <form id="form">
+    <input
+      type="text"
+      id="input"
+      name="input"
+      placeholder="Type something..."
+    />
+    <button id="btn">Send</button>
+  </form>
+</Layout>
+
+<script>
+  const form = document.getElementById("form") as HTMLFormElement;
+  const input = document.getElementById("input") as HTMLInputElement;
+  const chat = document.getElementById("chat") as HTMLDivElement;
+
+  let userId = "";
+
+  let ws = new WebSocket("ws://localhost:8080");
+
+  ws.onopen = (_) => {
+    console.log("WebSocket is open...");
+  };
+
+  ws.onmessage = (event) => {
+    console.log("Message from server:", event.data);
+    const data = JSON.parse(event.data);
+
+    if (data.first) {
+      const { messages, client } = data;
+      userId = client;
+      let template = "";
+      messages.forEach(
+        ({ client, message }: { client: string; message: string }) => {
+          template += `<span><strong>${client.split('-')[0].slice(0, 3)}:</strong> ${message} </span> <br/>`;
+        }
+      );
+      chat.innerHTML = template;
+    } else {
+      const { client, message } = data;
+      chat.innerHTML += `<span><strong>${client.split('-')[0].slice(0, 3)}:</strong> ${message} </span> <br/>`;
+    }
+  };
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    if (!input.value) {
+      console.error("Input is empty, nothing to send.");
+      return;
+    }
+
+    if (ws.readyState === WebSocket.OPEN) {
+      console.log("Form submitted, sending message to server:", input.value);
+      ws.send(input.value);
+      chat.innerHTML += `<span><strong>${userId.split('-')[0].slice(0, 3)}:</strong> ${input.value} </span> <br/>`;
+    } else {
+      console.log("WebSocket is not open.");
+    }
+
+    input.value = "";
+  });
+</script>

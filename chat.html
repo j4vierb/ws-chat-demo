@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+</head>
+<body>
+  <form id="login-form">
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required placeholder="Enter your username">
+
+    <button type="submit">Login</button>
+  </form>
+  <script>
+    document.getElementById('login-form').addEventListener('submit', function(event) {
+      event.preventDefault(); // Prevent the form from submitting normally
+
+      const username = document.getElementById('username').value;
+      if (username) {
+        localStorage.setItem('username', username); // Store the username in localStorage
+        window.location.href = 'index.html'; // Redirect to the chat page
+      } else {
+        alert('Please enter a username.');
+      }
+    });
+  </script>
+</body>
+</html>

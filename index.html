@@ -4,70 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ws</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
 </head>
 <body>
   <main>
-    <button id="btn-close">Close connection</button>
-
-    <div id="chat"></div>
-
-    <form id="form">
-      <label for="input">Input:</label>
-      <input type="text" id="input" name="input" placeholder="Type something...">
-      <button id="btn">Send info to the server</button>
-    </form>
+    
   </main>
   <script>
-    let ws = new WebSocket('ws://localhost:8080');
-    let btnClose = document.getElementById('btn-close');
-    let form = document.getElementById('form');
-    let input = document.getElementById('input');
-    let chat = document.getElementById('chat');
-    let messages = [];
-
-    ws.onopen = (event) => {
-      console.log('WebSocket is open now.');
-      // ws.send('Hello, server!');
-    }
-
-    ws.onmessage = (event) => {
-      console.log('Message from server:', event.data);
-      const messages = JSON.parse(event.data);
-      chat.innerHTML = '';
-      let template = '';
-      messages.forEach(({message, client}) => {
-        template += `<span><strong>${client}:</strong> ${message} </span> <br/>`;
-      });
-      chat.innerHTML = template;
-    }
-
-    btnClose.addEventListener('click', () => {
-      if (ws.readyState === WebSocket.OPEN) {
-        console.log('Closing WebSocket connection...');
-        ws.close();
-        console.log('WebSocket connection status:', ws.readyState);
-      } else {
-        console.log('WebSocket is not open.');
-      }
-    });
-
-    form.addEventListener('submit', (event) => {
-      event.preventDefault();
-
-      if (!input.value) {
-        console.error('Input is empty, nothing to send.');
-        return;
-      }
-      
-      if (ws.readyState === WebSocket.OPEN) {
-        console.log('Form submitted, sending message to server:', input.value);
-        ws.send(input.value);
-      } else {
-        console.log('WebSocket is not open.');
-      }
-
-      input.value = '';
-    });
+   
   </script>
 </body>
 </html>

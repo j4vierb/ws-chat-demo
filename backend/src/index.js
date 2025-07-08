@@ -1,4 +1,5 @@
 import { WebSocketServer } from "ws";
+import { randomUUID } from "crypto";
 
 const wss = new WebSocketServer({ port: 8080 });
 const messages = [];
@@ -6,29 +7,29 @@ const messages = [];
 console.log("WebSocket server is running on ws://localhost:8080");
 
 wss.on("connection", (ws) => {
-  const clientId = wss.clients.size;
-  console.log(`Client ${clientId} connected`);
+  const clientId = randomUUID();
+  console.log(`New client connected: "${clientId}"`);
 
   ws.on('error', console.error);
 
   ws.on('message', (message) => {
     console.log(`Received message: ${message}`);
-    messages.push({ message: message.toString(), client: clientId });
-    // ws.send(JSON.stringify(messages));
+    const newMessage = { message: message.toString(), client: clientId };
+    messages.push(newMessage);
 
     // Broadcast the message to all connected clients
     console.log(`Broadcasting message to ${wss.clients.size} clients`);
     wss.clients.forEach((client) => {
-      if (client.readyState === client.OPEN) {
-        client.send(JSON.stringify(messages.length < 8 ? messages : messages.slice(-8)));
+      if (client !== ws && client.readyState === client.OPEN) {
+        client.send(JSON.stringify(newMessage));
       }
     });
   });
 
   ws.on("close", () => {
-    console.log(`Client ${clientId} disconnected`);
+    console.log(`New client disconnected: "${clientId}"`);
   });
 
-  //ws.send('Hello from WebSocket server!');
-  ws.send(JSON.stringify(messages));
+  // Send the current messages to the newly connected clients
+  ws.send(JSON.stringify({ messages: messages, client: clientId, first: true }));
 });
