@@ -5,12 +5,14 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node --watch ./index.js",
+    "start": "node --watch --experimental-transform-types ./index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "j4vierb",
   "license": "ISC",
   "dependencies": {
+    "@types/node": "24.0.10",
+    "@types/ws": "8.18.1",
     "ws": "^8.18.3"
   }
 }
